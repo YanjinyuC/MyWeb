@@ -1,0 +1,115 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<style type="text/css">
+
+.imgbox{width:530px;margin:20px;height:350px;}
+.imgbox img{width:530px;height:350px;}
+.imgbox ul{list-style-type:none;margin:0px;padding:0px;}
+.imgbox ul li{display:none;}
+.title_bg{z-index:1;background-color:#eee;filter:alpha(opacity=30);-moz-opacity:0.3;opacity:0.3;}
+.title{z-index:2;color:#FFF;text-indent:10px;font-size:14px;line-height:40px;}
+.pager{z-index:3;}
+.common{position:relative;height:40px;margin-top:-43px;}
+.pager ul{margin-top:5px;}
+.pager ul li{float:right;color:#FFF;font-size:12px;display:block;border:2px solid #aaa; border-radius:15px;width:15px;height:15px;margin-right:4px;margin-top:5px;text-align:center;line-height:15px;background-color:#333;cursor:pointer;}
+</style>
+</head>
+
+<body>
+  <!--整体容器-->
+  <div class="imgbox">
+    <!--图片列表，除第一张显示外，其余隐藏-->
+    <ul>
+        <li style="display: block;" title="网页截图"><a href="#">
+            <img src="tuku/myweb.jpg" /></a></li>
+        <li title="ps处理后的野花"><a href="#">
+            <img src="tuku/flower.jpg" /></a></li>
+        <li title="网页设计图"><a href="#">
+            <img src="tuku/ps.jpg" /></a></li>
+        <li title="ps处理后的郁金香"><a href="#">
+            <img src="tuku/Tulips.jpg" /></a></li>
+    </ul>
+    <!--图片标题背景-->
+    <div class="title_bg common"></div>
+    <!--图片标题区-->
+    <div class="title common"></div>
+    <!--图片序号区-->
+    <div class="pager common">
+      <ul>
+          <li>4</li>
+          <li>3</li>
+          <li>2</li>
+          <li style="background:#e60012;">1</li>
+      </ul>
+    </div>
+  </div> 
+  <script>
+     $(document).ready(function () {
+            (new CenterImgPlay()).Start();
+        });
+        function CenterImgPlay() {
+            this.list = $(".imgbox").children(":first").children();
+            this.indexs = [];
+            this.length = this.list.length;
+            //图片显示时间
+            this.timer = 3000;
+            this.showTitle = $(".title");
+
+            var index = 0, self = this, pre = 0, handid, isPlay = false, isPagerClick = false;
+
+            this.Start = function () {
+                this.Init();
+                //计时器，用于定时轮播图片
+                handid = setInterval(self.Play, this.timer);
+            };
+            //初始化
+            this.Init = function () {
+                var o = $(".pager ul li"), _i;
+
+                for (var i = o.length - 1, n = 0; i >= 0; i--, n++) {
+                    this.indexs[n] = o.eq(i).click(self.PagerClick);
+                }
+            };
+            this.Play = function () {
+                isPlay = true;
+                index++;
+                if (index == self.length) {
+                    index = 0;
+                }
+                //先淡出，在回调函数中执行下一张淡入
+                self.list.eq(pre).fadeOut(300, "linear", function () {
+                    var info = self.list.eq(index).fadeIn(500, "linear", function () {
+                        isPlay = false;
+                        if (isPagerClick) { handid = setInterval(self.Play, self.timer); isPagerClick = false; }
+                    }).attr("title");
+                    //显示标题
+                    self.showTitle.text(info);
+                    //图片序号背景更换
+                    self.indexs[index].css("background-color", "#e60012");
+                    self.indexs[pre].css("background-color", "#333");
+
+                    pre = index;
+                });
+            };
+            //图片序号点击
+            this.PagerClick = function () {
+                if (isPlay) { return; }
+                isPagerClick = true;
+
+                clearInterval(handid);
+
+                var oPager = $(this), i = parseInt(oPager.text()) - 1;
+
+                if (i != pre) {
+                    index = i - 1;
+                    self.Play();
+                }
+            };
+        };
+  </script>    
+</body>
+</html>
