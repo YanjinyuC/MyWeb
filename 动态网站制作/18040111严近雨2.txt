@@ -1,0 +1,9 @@
+<!--程序结束标记-->在浏览器中显示一串文字的方法
+<HTML>
+<body>
+<script language="VBScript"> //<script>程序开始标记 每一段独立的程序开始时都要标注
+document.write("本行为VBScript语言语句的一条语句。")
+
+</script>
+</body>
+</HTML>
